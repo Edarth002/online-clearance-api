@@ -4,6 +4,7 @@ import helmet from "helmet";
 import morgan from "morgan";
 import dotenv from "dotenv";
 import authRoutes from "./src/routes/authRoutes.js";
+import clearanceRoutes from "./src/routes/clearanceRoute.js";
 
 dotenv.config();
 
@@ -18,7 +19,7 @@ app.use(express.urlencoded({ extended: false }));
 
 // Routes
 app.use("/api/auth", authRoutes);
-// app.use('/api/clearance', clearanceRoutes);
+app.use("/api/clearance", clearanceRoutes);
 
 app.get("/", (req, res) =>
   res.send("Online Clearance API built by Edoho Daniel is running ✅")

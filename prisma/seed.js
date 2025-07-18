@@ -48,7 +48,6 @@ async function main() {
   // Add test clearance request
   const clearance = await prisma.clearanceRequest.create({
     data: {
-      reason: "For final year clearance",
       matricNumber: "UNN/2020/123456",
       department: "Computer Science",
       studentId: student.id,

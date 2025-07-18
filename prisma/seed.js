@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 async function main() {
-  // Delete existing data
+  //Delete existing data
   //   await prisma.approval.deleteMany();
   //   await prisma.clearanceRequest.deleteMany();
   //   await prisma.document.deleteMany();

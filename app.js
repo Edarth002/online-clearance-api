@@ -3,7 +3,7 @@ import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
 import dotenv from "dotenv";
-import authRoutes from "./src/routes/authRoutes.js";
+import authRoutes from "./src/routes/authRoute.js";
 import clearanceRoutes from "./src/routes/clearanceRoute.js";
 import approvalRoutes from "./src/routes/approvalRoute.js";
 import adminRoutes from "./src/routes/adminRoute.js";

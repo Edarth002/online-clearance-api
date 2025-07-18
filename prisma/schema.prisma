@@ -44,6 +44,7 @@ model ClearanceRequest {
   studentId  Int
   status     ClearanceStatus     @default(PENDING)
   createdAt  DateTime            @default(now())
+  matricNumber String
   updatedAt  DateTime            @updatedAt
   student    Student             @relation(fields: [studentId], references: [id])
   approvals  ClearanceApproval[]

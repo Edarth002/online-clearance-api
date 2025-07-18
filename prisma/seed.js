@@ -2,56 +2,77 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 async function main() {
-  // Clear previous data safely
-  //   await prisma.approval.deleteMany();
-  //   await prisma.clearanceRequest.deleteMany();
-  //   await prisma.user.deleteMany();
   const hashedPassword =
     "$2a$12$sOv0VAuHz0nF5CUMBmdQk.WR08P.t2ftAROk2L6qSH4cooetWboqK";
 
-  // Create users
-  const student = await prisma.user.create({
+  // Create Users
+  const studentUser = await prisma.user.create({
     data: {
       name: "John Doe",
-      email: "student@example.com",
+      email: "johndoe@example.com",
       password: hashedPassword,
       role: "STUDENT",
     },
   });
 
-  const deptOfficer = await prisma.user.create({
+  const deptUser = await prisma.user.create({
     data: {
       name: "Mrs. Chika",
-      email: "dept@example.com",
+      email: "chika@example.com",
       password: hashedPassword,
       role: "OFFICER",
     },
   });
 
-  const facultyOfficer = await prisma.user.create({
+  const facultyUser = await prisma.user.create({
     data: {
       name: "Mr. Obinna",
-      email: "faculty@example.com",
+      email: "obinna@example.com",
       password: hashedPassword,
       role: "OFFICER",
     },
   });
 
-  const admin = await prisma.user.create({
+  const adminUser = await prisma.user.create({
     data: {
       name: "Admin Mike",
-      email: "admin@example.com",
+      email: "mike@example.com",
       password: hashedPassword,
       role: "ADMIN",
     },
   });
 
-  // Create a test clearance request with approval stages
+  // Create Student & Officers
+  const student = await prisma.student.create({
+    data: {
+      userId: studentUser.id,
+      matricNo: "UNN/2020/123456",
+      department: "Computer Science",
+      faculty: "Physical Sciences",
+    },
+  });
+
+  const deptOfficer = await prisma.officer.create({
+    data: {
+      userId: deptUser.id,
+      position: "Department Officer",
+      department: "Computer Science",
+    },
+  });
+
+  const facultyOfficer = await prisma.officer.create({
+    data: {
+      userId: facultyUser.id,
+      position: "Faculty Officer",
+      faculty: "Physical Sciences",
+    },
+  });
+
+  // Create Clearance Request with Approvals
   await prisma.clearanceRequest.create({
     data: {
-      matricNumber: "UNN/2020/123456",
-      department: "Computer Science",
       studentId: student.id,
+      matricNumber: student.matricNo,
       approvals: {
         create: [
           {

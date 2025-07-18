@@ -33,3 +33,8 @@ export const approveClearance = async (req, res) => {
       .json({ message: "Error processing approval", error: err.message });
   }
 };
+
+export const rejectClearance = async (req, res) => {
+  req.body.status = "REJECTED";
+  return approveClearance(req, res);
+};

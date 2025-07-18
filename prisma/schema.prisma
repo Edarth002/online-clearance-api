@@ -1,0 +1,91 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  name      String
+  role      Role
+  student   Student? // If the user is a student
+  officer   Officer? // If the user is a clearance officer
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Student {
+  id         Int     @id @default(autoincrement())
+  userId     Int     @unique
+  matricNo   String  @unique
+  department String
+  faculty    String
+  user       User    @relation(fields: [userId], references: [id])
+  requests   ClearanceRequest[]
+}
+
+model Officer {
+  id         Int     @id @default(autoincrement())
+  userId     Int     @unique
+  position   String  // e.g. "HOD", "Faculty Officer", "Librarian"
+  department String?
+  faculty    String?
+  user       User    @relation(fields: [userId], references: [id])
+  approvals  ClearanceApproval[]
+}
+
+model ClearanceRequest {
+  id         Int                 @id @default(autoincrement())
+  studentId  Int
+  status     ClearanceStatus     @default(PENDING)
+  createdAt  DateTime            @default(now())
+  updatedAt  DateTime            @updatedAt
+  student    Student             @relation(fields: [studentId], references: [id])
+  approvals  ClearanceApproval[]
+  documents  Document[]
+}
+
+model ClearanceApproval {
+  id         Int         @id @default(autoincrement())
+  requestId  Int
+  officerId  Int
+  stage      String      // e.g. "Library", "Department", "Faculty"
+  status     ApprovalStatus @default(PENDING)
+  comment    String?
+  approvedAt DateTime?
+  request    ClearanceRequest @relation(fields: [requestId], references: [id])
+  officer    Officer          @relation(fields: [officerId], references: [id])
+}
+
+model Document {
+  id         Int      @id @default(autoincrement())
+  requestId  Int
+  name       String   // e.g. "Library Clearance Form"
+  fileUrl    String
+  uploadedAt DateTime @default(now())
+  request    ClearanceRequest @relation(fields: [requestId], references: [id])
+}
+
+enum Role {
+  STUDENT
+  OFFICER
+  ADMIN
+}
+
+enum ClearanceStatus {
+  PENDING
+  IN_PROGRESS
+  CLEARED
+  REJECTED
+}
+
+enum ApprovalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}

@@ -3,10 +3,10 @@ const prisma = new PrismaClient();
 
 async function main() {
   // Delete existing data
-  await prisma.approval.deleteMany();
-  await prisma.clearanceRequest.deleteMany();
-  await prisma.document.deleteMany();
-  await prisma.user.deleteMany();
+  //   await prisma.approval.deleteMany();
+  //   await prisma.clearanceRequest.deleteMany();
+  //   await prisma.document.deleteMany();
+  //   await prisma.user.deleteMany();
 
   // Create users
   const student = await prisma.user.create({
@@ -23,7 +23,7 @@ async function main() {
       name: "Mrs. Chika",
       email: "dept@example.com",
       password: "$2a$12$sOv0VAuHz0nF5CUMBmdQk.WR08P.t2ftAROk2L6qSH4cooetWboqK",
-      role: "DEPARTMENT_OFFICER",
+      role: "OFFICER",
     },
   });
 
@@ -32,7 +32,7 @@ async function main() {
       name: "Mr. Obinna",
       email: "faculty@example.com",
       password: "$2a$12$sOv0VAuHz0nF5CUMBmdQk.WR08P.t2ftAROk2L6qSH4cooetWboqK",
-      role: "FACULTY_OFFICER",
+      role: "OFFICER",
     },
   });
 
@@ -53,7 +53,7 @@ async function main() {
       department: "Computer Science",
       studentId: student.id,
       approvals: {
-        create: [{ stage: "DEPARTMENT_OFFICER" }, { stage: "FACULTY_OFFICER" }],
+        create: [{ stage: "OFFICER" }, { stage: "OFFICER" }],
       },
     },
   });

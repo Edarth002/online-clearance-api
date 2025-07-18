@@ -8,7 +8,7 @@ import role from "../middlewares/roleMiddleware.js";
 
 const router = express.Router();
 
-router.post("/", auth, role("STUDENT"), submitRequest);
-router.get("/", auth, role("STUDENT"), getStatus);
+router.post("/submit", auth, role("STUDENT"), submitRequest);
+router.get("/status", auth, role("STUDENT"), getStatus);
 
 export default router;

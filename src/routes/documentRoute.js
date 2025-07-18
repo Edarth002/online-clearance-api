@@ -10,7 +10,7 @@ import upload from "../middlewares/fileUploadMiddleware.js";
 const router = express.Router();
 
 router.post(
-  "/",
+  "/upload-document",
   auth,
   role("STUDENT"),
   upload.single("document"),

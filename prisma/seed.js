@@ -13,7 +13,7 @@ async function main() {
     data: {
       name: "John Doe",
       email: "student@example.com",
-      password: "hashed_student_password", // hash manually before using
+      password: "$2a$12$sOv0VAuHz0nF5CUMBmdQk.WR08P.t2ftAROk2L6qSH4cooetWboqK",
       role: "STUDENT",
     },
   });
@@ -22,7 +22,7 @@ async function main() {
     data: {
       name: "Mrs. Chika",
       email: "dept@example.com",
-      password: "hashed_dept_password",
+      password: "$2a$12$sOv0VAuHz0nF5CUMBmdQk.WR08P.t2ftAROk2L6qSH4cooetWboqK",
       role: "DEPARTMENT_OFFICER",
     },
   });
@@ -31,7 +31,7 @@ async function main() {
     data: {
       name: "Mr. Obinna",
       email: "faculty@example.com",
-      password: "hashed_faculty_password",
+      password: "$2a$12$sOv0VAuHz0nF5CUMBmdQk.WR08P.t2ftAROk2L6qSH4cooetWboqK",
       role: "FACULTY_OFFICER",
     },
   });
@@ -40,7 +40,7 @@ async function main() {
     data: {
       name: "Admin Mike",
       email: "admin@example.com",
-      password: "hashed_admin_password",
+      password: "$2a$12$sOv0VAuHz0nF5CUMBmdQk.WR08P.t2ftAROk2L6qSH4cooetWboqK",
       role: "ADMIN",
     },
   });

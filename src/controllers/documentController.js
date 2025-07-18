@@ -2,7 +2,14 @@ import prisma from "../config/db.js";
 
 export const uploadDocument = async (req, res) => {
   const studentId = req.user.id;
-  const { type, url } = req.body;
+  const { type } = req.body;
+  const file = req.file;
+
+  if (!file) {
+    return res.status(400).json({ message: "No file uploaded" });
+  }
+
+  const url = `/uploads/${file.filename}`; // You can change this path depending on your frontend needs
 
   try {
     const student = await prisma.student.findUnique({

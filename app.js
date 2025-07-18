@@ -20,6 +20,9 @@ app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+//Middleware to handle file uploads
+app.use("/uploads", express.static("uploads"));
+
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/clearance", clearanceRoutes);

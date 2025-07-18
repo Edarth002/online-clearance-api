@@ -5,6 +5,9 @@ import morgan from "morgan";
 import dotenv from "dotenv";
 import authRoutes from "./src/routes/authRoutes.js";
 import clearanceRoutes from "./src/routes/clearanceRoute.js";
+import approvalRoutes from "./src/routes/approvalRoute.js";
+import adminRoutes from "./src/routes/adminRoute.js";
+import documentRoutes from "./src/routes/documentRoute.js";
 
 dotenv.config();
 
@@ -20,6 +23,9 @@ app.use(express.urlencoded({ extended: false }));
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/clearance", clearanceRoutes);
+app.use("/api/approval", approvalRoutes);
+app.use("/api/admin", adminRoutes);
+app.use("/api/documents", documentRoutes);
 
 app.get("/", (req, res) =>
   res.send("Online Clearance API built by Edoho Daniel is running ✅")

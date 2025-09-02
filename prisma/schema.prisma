@@ -27,6 +27,8 @@ model Student {
   faculty    String
   user       User    @relation(fields: [userId], references: [id])
   requests   ClearanceRequest[]
+
+  AcceptedClearance AcceptedClearance[]
 }
 
 model Officer {
@@ -49,6 +51,8 @@ model ClearanceRequest {
   student    Student             @relation(fields: [studentId], references: [id])
   approvals  ClearanceApproval[]
   documents  Document[]
+
+  AcceptedClearance AcceptedClearance[]
 }
 
 model ClearanceApproval {
@@ -61,6 +65,8 @@ model ClearanceApproval {
   approvedAt DateTime?
   request    ClearanceRequest @relation(fields: [requestId], references: [id])
   officer    Officer          @relation(fields: [officerId], references: [id])
+
+  @@unique([requestId, officerId])
 }
 
 model Document {
@@ -71,6 +77,16 @@ model Document {
   uploadedAt DateTime @default(now())
   request    ClearanceRequest @relation(fields: [requestId], references: [id])
 }
+
+model AcceptedClearance {
+  id          Int      @id @default(autoincrement())
+  studentId   Int
+  requestId   Int      @unique
+  approvedAt  DateTime @default(now())
+  student     Student  @relation(fields: [studentId], references: [id])
+  request     ClearanceRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+}
+
 
 enum Role {
   STUDENT

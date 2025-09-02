@@ -1,19 +1,24 @@
 import prisma from "../config/db.js";
 
-// Officer approves or rejects a clearance request
 export const approveClearance = async (req, res) => {
-  const officerId = req.user.id;
-  const { requestId, status, comment } = req.body;
-
-  if (!["APPROVED", "REJECTED"].includes(status)) {
-    return res.status(400).json({ message: "Invalid status" });
-  }
-
   try {
-    const officer = await prisma.clearanceOfficer.findUnique({
+    const officerId = req.user.id;
+    const requestId = parseInt(req.params.requestId, 10);
+    const { comment } = req.body;
+
+    if (isNaN(requestId)) {
+      return res.status(400).json({ error: "Invalid requestId" });
+    }
+
+    const officer = await prisma.officer.findUnique({
       where: { userId: officerId },
     });
 
+    if (!officer) {
+      return res.status(404).json({ message: "Officer not found" });
+    }
+
+    // ✅ Approve the request (in approvals table)
     const approval = await prisma.clearanceApproval.upsert({
       where: {
         requestId_officerId: {
@@ -21,20 +26,63 @@ export const approveClearance = async (req, res) => {
           officerId: officer.id,
         },
       },
-      update: { status, comment },
-      create: { requestId, officerId: officer.id, status, comment },
+      update: { status: "APPROVED", comment, approvedAt: new Date() },
+      create: {
+        requestId,
+        officerId: officer.id,
+        stage: officer.position,
+        status: "APPROVED",
+        comment,
+        approvedAt: new Date(),
+      },
     });
 
-    res.json({ message: `Request ${status.toLowerCase()}`, approval });
+    // ✅ Move request into AcceptedClearance
+    const request = await prisma.clearanceRequest.findUnique({
+      where: { id: requestId },
+    });
+
+    if (!request) {
+      return res.status(404).json({ message: "Request not found" });
+    }
+
+    await prisma.acceptedClearance.create({
+      data: {
+        studentId: request.studentId,
+        requestId: request.id,
+      },
+    });
+
+    // Optionally: delete the old request
+    await prisma.clearanceRequest.delete({ where: { id: requestId } });
+
+    res.json({ message: "Clearance approved", approval });
   } catch (err) {
     console.error(err);
     res
       .status(500)
-      .json({ message: "Error processing approval", error: err.message });
+      .json({ error: "Something went wrong", details: err.message });
   }
 };
 
 export const rejectClearance = async (req, res) => {
-  req.body.status = "REJECTED";
-  return approveClearance(req, res);
+  try {
+    const requestId = parseInt(req.params.requestId, 10);
+
+    if (isNaN(requestId)) {
+      return res.status(400).json({ error: "Invalid requestId" });
+    }
+
+    // Delete request so student can re-apply
+    await prisma.clearanceRequest.delete({
+      where: { id: requestId },
+    });
+
+    res.json({ message: "Clearance request rejected and deleted" });
+  } catch (err) {
+    console.error(err);
+    res
+      .status(500)
+      .json({ error: "Something went wrong", details: err.message });
+  }
 };

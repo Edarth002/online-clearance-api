@@ -8,7 +8,17 @@ import role from "../middlewares/roleMiddleware.js";
 
 const router = express.Router();
 
-router.patch("/:requestId/approve", auth, role("OFFICER"), approveClearance);
-router.patch("/:requestId/reject", auth, role("OFFICER"), rejectClearance);
+router.patch(
+  "/:requestId/approve",
+  auth,
+  role("OFFICER", "ADMIN"),
+  approveClearance
+);
+router.patch(
+  "/:requestId/reject",
+  auth,
+  role("OFFICER", "ADMIN"),
+  rejectClearance
+);
 
 export default router;

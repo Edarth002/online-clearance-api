@@ -2,43 +2,48 @@ import prisma from "../config/db.js";
 
 export const uploadDocument = async (req, res) => {
   const studentId = req.user.id;
-  const { type } = req.body;
+  const { type } = req.body; // <-- optional, maybe used later
   const file = req.file;
 
   if (!file) {
     return res.status(400).json({ message: "No file uploaded" });
   }
 
-  const url = `/uploads/${file.filename}`; // You can change this path depending on your frontend needs
-
   try {
+    // Get the student
     const student = await prisma.student.findUnique({
       where: { userId: studentId },
     });
+    if (!student) {
+      return res.status(404).json({ message: "Student not found" });
+    }
 
+    // Get clearance request
     const request = await prisma.clearanceRequest.findFirst({
       where: { studentId: student.id },
     });
-
-    if (!request)
+    if (!request) {
       return res
         .status(400)
         .json({ message: "Submit clearance request first" });
+    }
 
+    // Save document
     const document = await prisma.document.create({
       data: {
-        type,
-        url,
-        requestId: request.id,
+        requestId: request.id, // ✅ valid foreign key
+        name: file.originalname, // ✅ required field
+        fileUrl: `/uploads/${file.filename}`,
       },
     });
 
     res.status(201).json({ message: "Document uploaded", document });
   } catch (err) {
     console.error(err);
-    res
-      .status(500)
-      .json({ message: "Error uploading document", error: err.message });
+    res.status(500).json({
+      message: "Error uploading document",
+      error: err.message,
+    });
   }
 };
 

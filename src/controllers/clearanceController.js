@@ -5,6 +5,7 @@ import prisma from "../config/db.js";
  */
 export const submitRequest = async (req, res) => {
   const studentId = req.user.id;
+  const { matricNumber } = req.body; // ✅ get matricNumber from frontend
 
   try {
     // Check if student already submitted a request
@@ -29,13 +30,19 @@ export const submitRequest = async (req, res) => {
       },
     });
 
-    if (!student)
+    if (!student) {
       return res.status(404).json({ message: "Student record not found" });
+    }
+
+    if (!matricNumber) {
+      return res.status(400).json({ message: "Matric number is required" });
+    }
 
     // Create new clearance request
     const request = await prisma.clearanceRequest.create({
       data: {
-        studentId: student.id,
+        studentId: student.id, // ✅ link to student table ID
+        matricNumber, // ✅ now defined
         status: "PENDING",
       },
     });
@@ -43,12 +50,10 @@ export const submitRequest = async (req, res) => {
     res.status(201).json({ message: "Clearance request submitted", request });
   } catch (err) {
     console.error(err);
-    res
-      .status(500)
-      .json({
-        message: "Could not submit clearance request",
-        error: err.message,
-      });
+    res.status(500).json({
+      message: "Could not submit clearance request",
+      error: err.message,
+    });
   }
 };
 
@@ -63,8 +68,9 @@ export const getStatus = async (req, res) => {
       where: { userId: studentId },
     });
 
-    if (!student)
+    if (!student) {
       return res.status(404).json({ message: "Student record not found" });
+    }
 
     const request = await prisma.clearanceRequest.findFirst({
       where: { studentId: student.id },
@@ -82,8 +88,9 @@ export const getStatus = async (req, res) => {
       },
     });
 
-    if (!request)
+    if (!request) {
       return res.status(404).json({ message: "No clearance request found" });
+    }
 
     res.json({
       status: request.status,
@@ -92,11 +99,9 @@ export const getStatus = async (req, res) => {
     });
   } catch (err) {
     console.error(err);
-    res
-      .status(500)
-      .json({
-        message: "Could not fetch clearance status",
-        error: err.message,
-      });
+    res.status(500).json({
+      message: "Could not fetch clearance status",
+      error: err.message,
+    });
   }
 };

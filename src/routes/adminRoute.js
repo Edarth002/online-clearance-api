@@ -5,6 +5,6 @@ import role from "../middlewares/roleMiddleware.js";
 
 const router = express.Router();
 
-router.get("/requests", auth, role("ADMIN"), getAllRequests);
+router.get("/requests", auth, role("ADMIN", "OFFICER"), getAllRequests);
 
 export default router;

@@ -59,11 +59,11 @@ model ClearanceApproval {
   id         Int         @id @default(autoincrement())
   requestId  Int
   officerId  Int
-  stage      String      // e.g. "Library", "Department", "Faculty"
+  stage      String
   status     ApprovalStatus @default(PENDING)
   comment    String?
   approvedAt DateTime?
-  request    ClearanceRequest @relation(fields: [requestId], references: [id])
+  request    ClearanceRequest @relation(fields: [requestId], references: [id], onDelete: Cascade) // ✅
   officer    Officer          @relation(fields: [officerId], references: [id])
 
   @@unique([requestId, officerId])
@@ -72,10 +72,10 @@ model ClearanceApproval {
 model Document {
   id         Int      @id @default(autoincrement())
   requestId  Int
-  name       String   // e.g. "Library Clearance Form"
+  name       String
   fileUrl    String
   uploadedAt DateTime @default(now())
-  request    ClearanceRequest @relation(fields: [requestId], references: [id])
+  request    ClearanceRequest @relation(fields: [requestId], references: [id], onDelete: Cascade) // ✅
 }
 
 model AcceptedClearance {
@@ -84,8 +84,9 @@ model AcceptedClearance {
   requestId   Int      @unique
   approvedAt  DateTime @default(now())
   student     Student  @relation(fields: [studentId], references: [id])
-  request     ClearanceRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  request     ClearanceRequest @relation(fields: [requestId], references: [id], onDelete: Cascade) // ✅ already done
 }
+
 
 
 enum Role {
